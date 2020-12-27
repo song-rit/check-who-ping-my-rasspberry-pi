@@ -6,15 +6,24 @@ led_pin=7
 led_status=0
 icmp_filter="ICMP echo request"
 
-GPIO.setmode(GPIO.BOARD)
-GPIO.setup(led_pin, GPIO.OUT) 
-
-def blink():
+def display_led_off():
  global led_pin
- GPIO.output(led_pin,GPIO.HIGH)
- time.sleep(0.5)    
  GPIO.output(led_pin,GPIO.LOW)
  time.sleep(0.5)
+
+def display_led_on():
+ global led_pin
+ GPIO.output(led_pin,GPIO.HIGH)
+ time.sleep(0.5) 
+
+def setup_led():
+ global led_pin
+ GPIO.setmode(GPIO.BOARD)
+ GPIO.setup(led_pin, GPIO.OUT) 
+
+def blink():
+ display_led_on()
+ display_led_off()
 
 def check_before_blink():
  global led_status
@@ -33,6 +42,8 @@ def check_icmp():
    check_before_blink()
 
 def main():
+ setup_led()
+ display_led_off()
  check_icmp()
 
 if __name__ == "__main__":
