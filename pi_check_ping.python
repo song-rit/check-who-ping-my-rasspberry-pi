@@ -1,0 +1,39 @@
+import subprocess as sub
+import RPi.GPIO as GPIO
+import time
+
+led_pin=7
+led_status=0
+icmp_filter="ICMP echo request"
+
+GPIO.setmode(GPIO.BOARD)
+GPIO.setup(led_pin, GPIO.OUT) 
+
+def blink():
+ global led_pin
+ GPIO.output(led_pin,GPIO.HIGH)
+ time.sleep(0.5)    
+ GPIO.output(led_pin,GPIO.LOW)
+ time.sleep(0.5)
+
+def check_before_blink():
+ global led_status
+ if led_status == 0:
+  led_status=1
+  blink()
+  led_status=0
+
+def check_icmp():
+ global icmp_filter
+ p = sub.Popen(('sudo', 'tcpdump', '-l'), stdout=sub.PIPE)
+ while True:
+  line = p.stdout.readline()
+  if line.find(icmp_filter) != -1:
+   print(line)
+   check_before_blink()
+
+def main():
+ check_icmp()
+
+if __name__ == "__main__":
+ main() 
